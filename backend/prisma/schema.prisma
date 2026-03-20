@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-py"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SourceRecord {
+  id                  String               @id @default(cuid())
+  sourceId            String
+  contentHash         String
+  versionTs           DateTime
+  pipelineId          String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  isStale             Boolean              @default(false)
+  transformationSteps TransformationStep[]
+  embeddings          Embedding[]
+  stalenessAlerts     StalenessAlert[]
+}
+
+model TransformationStep {
+  id             String       @id @default(cuid())
+  sourceRecordId String
+  sourceRecord   SourceRecord @relation(fields: [sourceRecordId], references: [id])
+  operatorName   String
+  inputHash      String
+  outputHash     String
+  appliedAt      DateTime
+}
+
+model Embedding {
+  id                   String                    @id @default(cuid())
+  chunkIndex           Int
+  parentSourceRecordId String
+  parentSourceRecord   SourceRecord              @relation(fields: [parentSourceRecordId], references: [id])
+  vectorDbId           String
+  embeddingModel       String
+  isStale              Boolean                   @default(false)
+  createdAt            DateTime                  @default(now())
+  retrievalEvents      RetrievalEventEmbedding[]
+}
+
+model RetrievalEvent {
+  id              String                    @id @default(cuid())
+  sessionId       String
+  queryText       String
+  retrievedAt     DateTime                  @default(now())
+  embeddings      RetrievalEventEmbedding[]
+  promptContexts  PromptContext[]
+}
+
+model RetrievalEventEmbedding {
+  id               String         @id @default(cuid())
+  retrievalEventId String
+  retrievalEvent   RetrievalEvent @relation(fields: [retrievalEventId], references: [id])
+  embeddingId      String
+  embedding        Embedding      @relation(fields: [embeddingId], references: [id])
+}
+
+model PromptContext {
+  id               String         @id @default(cuid())
+  retrievalEventId String
+  retrievalEvent   RetrievalEvent @relation(fields: [retrievalEventId], references: [id])
+  promptHash       String
+  assembledAt      DateTime       @default(now())
+  llmResponses     LLMResponse[]
+}
+
+model LLMResponse {
+  id              String        @id @default(cuid())
+  promptContextId String
+  promptContext   PromptContext @relation(fields: [promptContextId], references: [id])
+  responseText    String
+  responseHash    String
+  modelVersion    String
+  respondedAt     DateTime      @default(now())
+}
+
+model StalenessAlert {
+  id               String        @id @default(cuid())
+  sourceRecordId   String
+  sourceRecord     SourceRecord  @relation(fields: [sourceRecordId], references: [id])
+  detectedAt       DateTime      @default(now())
+  previousHash     String
+  currentHash      String
+  embeddingsMarked Int
+  resolvedAt       DateTime?
+}
