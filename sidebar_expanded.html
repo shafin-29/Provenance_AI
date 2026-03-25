@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ProvenanceAI - Developer Platform</title>
+<!-- Google Fonts: Manrope & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-on-surface": "#eef0ff",
+              "surface-container-low": "#f2f3ff",
+              "secondary-container": "#c9b3fd",
+              "on-tertiary-container": "#fffbff",
+              "secondary": "#665396",
+              "on-tertiary-fixed-variant": "#673d00",
+              "error": "#ba1a1a",
+              "on-secondary": "#ffffff",
+              "on-secondary-fixed": "#220b4e",
+              "inverse-primary": "#d0bcff",
+              "primary": "#6b38d4",
+              "surface-dim": "#d2d9f4",
+              "on-background": "#131b2e",
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#ffdcbb",
+              "tertiary-fixed-dim": "#ffb869",
+              "primary-fixed-dim": "#d0bcff",
+              "surface-container": "#eaedff",
+              "on-primary-fixed": "#23005c",
+              "outline-variant": "#cbc3d7",
+              "on-error-container": "#93000a",
+              "secondary-fixed": "#e9ddff",
+              "primary-container": "#8455ef",
+              "on-primary-container": "#fffbff",
+              "on-surface-variant": "#494454",
+              "tertiary": "#855000",
+              "tertiary-container": "#a76500",
+              "on-tertiary-fixed": "#2c1700",
+              "on-error": "#ffffff",
+              "error-container": "#ffdad6",
+              "on-surface": "#131b2e",
+              "inverse-surface": "#283044",
+              "on-tertiary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#d0bcff",
+              "surface-container-high": "#e2e7ff",
+              "surface-variant": "#dae2fd",
+              "primary-fixed": "#e9ddff",
+              "surface-container-highest": "#dae2fd",
+              "background": "#faf8ff",
+              "on-primary-fixed-variant": "#5516be",
+              "on-secondary-fixed-variant": "#4e3b7c",
+              "surface": "#faf8ff",
+              "surface-bright": "#faf8ff",
+              "on-secondary-container": "#544183",
+              "outline": "#7b7486",
+              "surface-tint": "#6d3bd7"
+            },
+            fontFamily: {
+              "headline": ["Manrope", "sans-serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      h1, h2, h3 {
+        font-family: 'Manrope', sans-serif;
+      }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex">
+<!-- SideNavBar Component (Shared Component Execution) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col justify-between py-6 px-4 z-40 h-screen w-64 border-r-0 rounded-none bg-slate-50 dark:bg-slate-950 transition-all duration-300">
+<!-- Header Section -->
+<div>
+<div class="flex items-center gap-3 px-2 mb-10">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_tree</span>
+</div>
+<div>
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50 leading-tight">ProvenanceAI</h1>
+<p class="text-[10px] font-medium uppercase tracking-widest text-on-surface-variant/70">Developer Platform</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="space-y-1.5">
+<!-- Dashboard (Active) -->
+<a class="flex items-center gap-3 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 rounded-xl px-4 py-2 border-l-4 border-violet-600 scale-[0.98] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<!-- Traces -->
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl px-4 py-2 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="Timeline">timeline</span>
+<span class="font-medium text-sm">Traces</span>
+</a>
+<!-- Sources -->
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl px-4 py-2 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="source">source</span>
+<span class="font-medium text-sm">Sources</span>
+</a>
+<!-- Staleness -->
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl px-4 py-2 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="timer_off">timer_off</span>
+<span class="font-medium text-sm">Staleness</span>
+</a>
+<!-- Alerts -->
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl px-4 py-2 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-medium text-sm">Alerts</span>
+</a>
+<!-- SDK Setup -->
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl px-4 py-2 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span class="font-medium text-sm">SDK Setup</span>
+</a>
+<!-- Pipelines -->
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl px-4 py-2 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="account_tree">account_tree</span>
+<span class="font-medium text-sm">Pipelines</span>
+</a>
+</nav>
+</div>
+<!-- Footer Section -->
+<div class="space-y-4">
+<div class="space-y-1.5">
+<!-- Settings -->
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl px-4 py-2 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-medium text-sm">Settings</span>
+</a>
+<!-- User Profile Card -->
+<div class="p-3 bg-surface-container-lowest rounded-xl shadow-sm ring-1 ring-slate-200/50 flex items-center gap-3 mt-4">
+<div class="relative">
+<img alt="User Profile" class="w-10 h-10 rounded-xl object-cover ring-2 ring-primary/10" data-alt="Professional headshot of a developer in a modern office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCizBFPFWsE96XsScnEHELH3-ZENcgUdRLI-1w-x6dhrv7wcgUtXuXcEHcJKmPp3fMQnyFIbr_YmG7DBVBh74nkjXT1VkQNyOIFTTecnHY87GNNmARSJozqClIfgf14icNAGvSbSzWbLR1biUZwFrmMuvHY3gVsw17j0BeZDiEUoO2nHA5wErrpZDWSzFt7kIdXUQ4j_Hy4ApVJAPFwShmy7oMeDojIqu0VzuX6SURPQuKeEE_1WsjrQJMIpzS45xpmfIqIuBKBiZIA"/>
+<div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-semibold text-on-surface truncate">Alex Rivera</p>
+<p class="text-[10px] text-on-surface-variant truncate">Premium Plan</p>
+</div>
+<button class="p-1 text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 flex-1 p-10 bg-background overflow-y-auto">
+<header class="mb-12 flex justify-between items-end">
+<div>
+<span class="text-label-sm font-semibold uppercase tracking-widest text-on-surface-variant opacity-70">Infrastructure Overview</span>
+<h2 class="text-4xl font-extrabold text-on-surface -mt-1 tracking-tight">System Dashboard</h2>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2.5 bg-surface-container-low text-on-surface font-semibold rounded-full hover:bg-surface-container-high transition-colors">
+                    View Logs
+                </button>
+<button class="px-6 py-2.5 bg-gradient-to-r from-primary to-primary-container text-white font-semibold rounded-full shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
+                    New Deployment
+                </button>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Hero Metric Card -->
+<div class="col-span-8 bg-surface-container-low rounded-[2rem] p-8 flex flex-col justify-between relative overflow-hidden h-[320px]">
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">bolt</span>
+<span class="text-sm font-bold text-primary uppercase tracking-wider">Live Performance</span>
+</div>
+<h3 class="text-5xl font-black text-on-surface tracking-tighter">99.98<span class="text-2xl text-on-surface-variant font-medium">%</span></h3>
+<p class="text-on-surface-variant mt-2 max-w-xs">Global system availability across all data sources and trace pipelines in the last 24h.</p>
+</div>
+<div class="flex items-end justify-between relative z-10">
+<div class="flex gap-1">
+<div class="w-2 h-8 bg-primary/20 rounded-full"></div>
+<div class="w-2 h-12 bg-primary/40 rounded-full"></div>
+<div class="w-2 h-10 bg-primary/30 rounded-full"></div>
+<div class="w-2 h-16 bg-primary rounded-full"></div>
+<div class="w-2 h-14 bg-primary/60 rounded-full"></div>
+<div class="w-2 h-20 bg-primary/80 rounded-full"></div>
+<div class="w-2 h-24 bg-primary rounded-full"></div>
+</div>
+<div class="text-right">
+<span class="text-xs font-bold text-on-surface-variant uppercase block">Current Latency</span>
+<span class="text-2xl font-bold text-on-surface">12ms</span>
+</div>
+</div>
+<!-- Abstract background pattern -->
+<div class="absolute -right-20 -top-20 w-80 h-80 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="absolute right-0 bottom-0 w-full h-full opacity-5 pointer-events-none">
+<svg height="100%" preserveaspectratio="none" viewbox="0 0 100 100" width="100%">
+<path d="M0,50 Q25,30 50,50 T100,50" fill="none" stroke="currentColor" stroke-width="0.5"></path>
+</svg>
+</div>
+</div>
+<!-- Side Card: Active Traces -->
+<div class="col-span-4 bg-surface-container-highest rounded-[2rem] p-8 flex flex-col justify-between h-[320px]">
+<div>
+<h4 class="text-xl font-bold text-on-surface mb-6">Active Traces</h4>
+<div class="space-y-4">
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50"></div>
+<span class="text-sm font-medium">Auth Service (v2.1)</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+<span class="text-sm font-medium">Payment Gateway</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
+<span class="text-sm font-medium">CDN Edge Node</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 rounded-full bg-slate-300"></div>
+<span class="text-sm font-medium opacity-50 text-on-surface-variant">Legacy API v1</span>
+</div>
+</div>
+</div>
+<button class="w-full py-3 bg-surface-container-lowest rounded-xl font-bold text-primary text-sm shadow-sm hover:shadow-md transition-shadow">
+                    Manage All Sources
+                </button>
+</div>
+<!-- Lower Row: Glassmorphism Alert & Pipeline -->
+<div class="col-span-6 bg-white rounded-[2rem] p-8 border border-outline-variant/10 shadow-sm relative overflow-hidden">
+<div class="flex items-start justify-between mb-10">
+<div class="p-3 bg-secondary-fixed rounded-2xl">
+<span class="material-symbols-outlined text-on-secondary-fixed-variant">notifications_active</span>
+</div>
+<span class="text-xs font-black bg-error-container text-on-error-container px-3 py-1 rounded-full uppercase">Critical</span>
+</div>
+<h4 class="text-2xl font-bold text-on-surface">Data Staleness Warning</h4>
+<p class="text-on-surface-variant mt-2 mb-8">Source <code class="bg-surface-container px-1.5 py-0.5 rounded font-mono text-xs">pg-prod-01</code> has not reported in 14 minutes. Data provenance integrity at risk.</p>
+<div class="flex gap-3">
+<button class="flex-1 py-3 bg-on-surface text-white rounded-xl font-bold text-sm">Investigate</button>
+<button class="px-5 py-3 bg-surface-container text-on-surface rounded-xl font-bold text-sm">Dismiss</button>
+</div>
+</div>
+<div class="col-span-6 bg-surface-container-low rounded-[2rem] p-8 flex items-center gap-8 group">
+<div class="w-40 h-40 flex-shrink-0 bg-surface-container-lowest rounded-full p-4 border-8 border-primary-fixed relative">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-primary-fixed" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-width="3"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="72, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-black text-on-surface leading-none">72%</span>
+<span class="text-[9px] font-bold text-on-surface-variant uppercase tracking-tighter">Sync</span>
+</div>
+</div>
+<div>
+<h4 class="text-xl font-bold text-on-surface">Pipeline Health</h4>
+<p class="text-on-surface-variant text-sm mt-1">SDK throughput is currently optimal at 4.2k requests/sec.</p>
+<a class="inline-flex items-center gap-2 text-primary text-sm font-bold mt-4 group-hover:translate-x-1 transition-transform" href="#">
+                        Explore SDK Configuration
+                        <span class="material-symbols-outlined text-base">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB (Suppressed based on context guidelines, only on relevant sub-pages) -->
+</body></html>

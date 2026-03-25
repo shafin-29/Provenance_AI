@@ -6,9 +6,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from app.api.routes import health, ingest, sources, trace, response, alerts
+from app.api.routes import health, ingest, sources, trace, response, alerts, keys
 from app.core.config import settings
 from app.core.db import prisma
+from app.core.auth import get_auth
+from fastapi import Depends
 
 logger = logging.getLogger("provenance")
 logging.basicConfig(level=logging.INFO)
@@ -65,7 +67,7 @@ app = FastAPI(
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -73,12 +75,12 @@ app.add_middleware(
 
 # Routers
 app.include_router(health.router)
-app.include_router(ingest.router, prefix="/api")
-app.include_router(sources.router, prefix="/api")
-app.include_router(trace.router, prefix="/api")
-app.include_router(response.router, prefix="/api")
-app.include_router(alerts.router)
-
+app.include_router(keys.router, prefix="/api/keys")
+app.include_router(ingest.router, prefix="/api", dependencies=[Depends(get_auth)])
+app.include_router(sources.router, prefix="/api", dependencies=[Depends(get_auth)])
+app.include_router(trace.router, prefix="/api", dependencies=[Depends(get_auth)])
+app.include_router(response.router, prefix="/api", dependencies=[Depends(get_auth)])
+app.include_router(alerts.router, prefix="/api", dependencies=[Depends(get_auth)])
 
 @app.get("/")
 async def root():
