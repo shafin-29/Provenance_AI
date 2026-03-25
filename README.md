@@ -43,13 +43,25 @@ npm run dev        # → http://localhost:3000
 
 ```bash
 cd backend
+
+# Setup virtual environment
 python -m venv .venv
 # Windows
-.venv\Scripts\activate
+.\.venv\Scripts\activate
 # macOS / Linux
 # source .venv/bin/activate
 
+# Install Python dependencies
 pip install -r requirements.txt
+pip install prisma  # Required for the database client
+
+# Install Node dependencies (for Prisma CLI)
+npm install
+
+# Generate Prisma client
+npx prisma generate
+
+# Run the server
 uvicorn app.main:app --reload --port 8000   # → http://localhost:8000
 ```
 
