@@ -1,4 +1,8 @@
-# ProvenanceAI
+<div align="center">
+  
+  # ProvenanceAI
+  
+  **Distributed tracing for AI pipelines.**
 
 **Distributed tracing for AI pipelines.** ProvenanceAI traces LLM and RAG pipeline outputs back to their source data records — giving ML engineers and data engineers full lineage visibility from query response back to raw ingested content.
 
