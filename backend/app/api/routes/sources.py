@@ -35,6 +35,7 @@ async def get_sources(stale: Optional[bool] = None):
             "createdAt": r.get("createdAt"),
             "updatedAt": r.get("updatedAt"),
             "isStale": bool(r.get("isStale", False)),
+            "isQuarantined": bool(r.get("isQuarantined", False)),
             "contentPreview": r.get("contentPreview"),
             "embeddingCount": int(r.get("embeddingCount", 0))
         })

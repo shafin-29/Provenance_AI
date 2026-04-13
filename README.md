@@ -1,12 +1,12 @@
 <div align="center">
   
   # ProvenanceAI
-  
-  **Distributed tracing for AI pipelines.**
 
-  ProvenanceAI traces every LLM response back through the exact data records that produced it — from source file to chunk to embedding to retrieval to prompt to output. Think Datadog APM, but for RAG systems.
+  **Active safety layer for AI pipelines.**
 
-</div
+  Like Cloudflare for RAG pipelines — always-on, invisible, automatic. ProvenanceAI intercepts every retrieval in real time, blocks stale or quarantined data before it reaches the LLM, and traces every response back to its exact source.
+
+</div>
 
   <div align="center">
 
@@ -21,54 +21,71 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 
 </div>
+
 ---
+
+## What It Does
+
+ProvenanceAI sits between your RAG retriever and your LLM. Every chunk that comes back from your vector store passes through the **ProvenanceShield** before it reaches the prompt. Stale data gets flagged, quarantined data gets blocked, and every decision is logged — all in under 20ms.
+
+```
+Vector DB → ProvenanceShield → [CLEAN / STALE / QUARANTINE / BLOCK] → LLM
+```
 
 ---
 
 ## Features
 
-**🧬 End-to-End RAG Lineage**  
-Track every piece of data from its source file to the final LLM response. Provenance tokens capture source IDs, version timestamps, transformation logs, and content hashes automatically embedded into your vector DB metadata.
+**🛡️ Real-Time Shield Interception**  
+Four safety modes — `PASS`, `WARN`, `SUBSTITUTE`, `BLOCK` — control how the shield handles stale or quarantined chunks. Configurable per-pipeline, enforced at retrieval time with sub-20ms latency.
 
-**📡 Full Pipeline Visibility**  
-Reconstruct the entire chain: source → transformations → chunks → embeddings → retrieval events → prompt contexts → model outputs. Instead of guessing why an answer was wrong, you can see the exact root cause.
+**🔬 Automated Remediation Engine**  
+When source content changes, the engine runs semantic diff analysis, classifies the change type (FORMATTING → ADDITIVE → MODIFIED → CONTRADICTORY), computes blast radius across all affected LLM responses, and takes automatic action — from monitoring to emergency quarantine.
 
-**🔗 Zero-Refactor Integration**  
-Drop-in wrappers for LangChain, LlamaIndex, and custom retrievers. You keep your existing pipeline ProvenanceAI instruments it transparently with only a few lines of SDK code.
+**📡 End-to-End Lineage Tracing**  
+Track every piece of data from source file → chunks → embeddings → retrieval events → prompt contexts → LLM responses. Reconstruct the full chain for any answer your system has ever produced.
 
-**🧭 Real-Time Staleness Detection**  
-Daily source polling automatically identifies outdated embeddings and runs forward graph traversal to mark all dependent responses. Know instantly what needs to be refreshed.
+**🚨 Multi-Channel Incident Alerts**  
+Severity-aware notifications via email (Resend) and Slack with rich formatting, blast radius metrics, and direct links to the incident dashboard.
 
-**💡 Attribution & Influence Ranking**  
-Counterfactual scoring highlights which retrieved chunk contributed most to a hallucination. Debug multi-source answers with clarity instead of guesswork.
+**🔒 One-Click Quarantine**  
+Instantly block any source from being retrieved — from the dashboard or via SDK. Quarantined sources are enforced at the Shield layer with zero pipeline changes required.
 
-**🚨 Human-in-the-Loop Controls**  
-One-click quarantine lets you tombstone bad embeddings on demand removed from all future retrievals at the vector wrapper layer without a reindex.
+**🧬 Staleness Detection**  
+Automated background checks compare source file hashes against stored records. When content changes, all downstream embeddings are marked stale and the remediation pipeline fires.
 
-**⚙️ Auto-Remediation Workflows**  
-Trigger Airflow DAGs or LlamaIndex refresh hooks via webhook when staleness or conflicts are detected. Go from hours of manual cleanup to seconds of automated recovery.
+**⚙️ Zero-Refactor Integration**  
+Drop-in Python SDK wraps your existing LangChain retriever. Two lines of code to instrument your entire pipeline:
+
+```python
+sdk = ProvenanceAIClient(api_url="...", api_key="...", pipeline_id="...")
+retriever = sdk.wrap(your_retriever, session_id="sess_001")
+```
 
 ---
 
-## Current Limitations
+## Architecture
 
-**⏱️ Initial Index Scan Overhead**  
-On large vector stores (50M+ embeddings), the first provenance sync may take several hours. Incremental syncs afterward are near-instant.
+```
+┌─────────────┐     ┌──────────────┐     ┌─────────────────┐
+│  Python SDK │────▶│  FastAPI API  │────▶│  Neon PostgreSQL │
+│  (Shield)   │     │  (Backend)   │     │  (Prisma ORM)   │
+└─────────────┘     └──────────────┘     └─────────────────┘
+                           │
+                    ┌──────┴──────┐
+                    │  Next.js    │
+                    │  Dashboard  │
+                    └─────────────┘
+```
 
-**📊 Heavy Metadata Usage**  
-Provenance tokens add structured metadata to each vector. Most managed vector DBs handle this seamlessly, but extremely metadata-limited configurations may require pruning.
-
-**🔍 Requires Consistent Source Identifiers**  
-If upstream systems mutate filenames or primary keys unpredictably, lineage quality degrades. Stable IDs yield dramatically better traceability.
-
-**📈 DAG Growth Over Time**  
-The provenance graph expands with retrieval volume. For extremely high-traffic workloads (20k+ RPS), periodic compaction or archival is recommended.
-
-**🛠️ Wrapper-Based Interception**  
-Although the SDK avoids pipeline refactors, fully custom retrieval implementations may need lightweight adapter wiring.
-
-**🔒 Best for Mature RAG Pipelines**  
-ProvenanceAI provides the most value in production environments with stable ingestion flows. Rapidly evolving experimental pipelines may produce more noise than insights initially.
+| Component | Stack |
+|-----------|-------|
+| **SDK** | Python, httpx, threading |
+| **Backend** | FastAPI, Prisma, APScheduler |
+| **Frontend** | Next.js 16, React 19, Tailwind CSS 4 |
+| **Auth** | Clerk |
+| **Database** | PostgreSQL (Neon) |
+| **Alerts** | Resend (email), Slack (webhooks) |
 
 ---
 
@@ -81,12 +98,11 @@ ProvenanceAI provides the most value in production environments with stable inge
 - **npm** (comes with Node.js)
 - **pip** (comes with Python)
 
-### 1. Frontend (Next.js)
+### 1. Clone & configure
 
 ```bash
-cd web
-npm install        # first time only
-npm run dev        # → http://localhost:3000
+cp .env.example .env
+# Edit .env with your DATABASE_URL, CLERK_SECRET_KEY, etc.
 ```
 
 ### 2. Backend (FastAPI)
@@ -101,12 +117,15 @@ python -m venv .venv
 # macOS / Linux
 # source .venv/bin/activate
 
-# Install Python dependencies
+# Install dependencies
 pip install -r requirements.txt
-pip install prisma  # Required for the database client
+pip install prisma
 
-# Install Node dependencies (for Prisma CLI)
+# Install Node deps (for Prisma CLI)
 npm install
+
+# Push schema to database
+npx prisma db push
 
 # Generate Prisma client
 npx prisma generate
@@ -119,24 +138,46 @@ uvicorn app.main:app --reload --port 8000   # → http://localhost:8000
 
 ```bash
 curl http://localhost:8000/health
-# → {"status":"ok","service":"provenance-ai"}
+# → {"status":"ok","service":"provenance-ai","database":"connected","timestamp":"..."}
 ```
 
-Interactive docs are available at **http://localhost:8000/docs**.
+Interactive docs at **http://localhost:8000/docs**.
+
+### 3. Frontend (Next.js)
+
+```bash
+cd web
+npm install        # first time only
+npm run dev        # → http://localhost:3000
+```
+
+### 4. SDK
+
+```bash
+cd sdk
+pip install -e .   # editable install for development
+python example.py  # run shield demo
+```
 
 ---
 
-## Tech Stack
+## E2E Test Suite
 
-| Category | Technology |
-|----------|-----------|
-| Framework | Next.js | 
-| Language | TypeScript | 
-| Styling | Tailwind CSS |
-| Backend | Python, Fast API |
-| Authentication | Clerk |
-| Database | PostgreSQL | 
-| ORM | Prisma | 
+Run the full integration test suite against a live backend:
+
+```bash
+PROVENANCE_AI_API_URL=http://localhost:8000 python tests/e2e_test.py
+```
+
+Tests cover: health check, API key CRUD, source ingestion, embedding creation, response chain, lineage trace, staleness detection, re-ingestion, dashboard stats, and cleanup.
+
+---
+
+## Deployment
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for step-by-step production deployment instructions covering Neon, Render, Vercel, and SDK distribution.
+
+---
 
 ## License
 

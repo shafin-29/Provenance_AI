@@ -7,6 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+
 model SourceRecord {
   id                  String               @id @default(cuid())
   sourceId            String
@@ -16,10 +18,14 @@ model SourceRecord {
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   isStale             Boolean              @default(false)
+  isQuarantined       Boolean              @default(false)
+  pendingReingest     Boolean              @default(false)
   contentPreview      String?
   transformationSteps TransformationStep[]
   embeddings          Embedding[]
   stalenessAlerts     StalenessAlert[]
+  quarantineRecords   QuarantineRecord[]
+  incidents           Incident[]
 }
 
 model TransformationStep {
@@ -100,4 +106,65 @@ model ApiKey {
   createdAt   DateTime  @default(now())
   lastUsedAt  DateTime?
   isActive    Boolean   @default(true)
+}
+
+model ShieldEvent {
+  id         String    @id @default(cuid())
+  eventType  String
+  pipelineId String
+  sessionId  String
+  sourceId   String
+  payload    Json
+  createdAt  DateTime  @default(now())
+  incidentId String?
+  incident   Incident? @relation(fields: [incidentId], references: [id])
+}
+
+model QuarantineRecord {
+  id             String       @id @default(cuid())
+  sourceRecordId String
+  sourceRecord   SourceRecord @relation(fields: [sourceRecordId], references: [id])
+  reason         String
+  quarantinedAt  DateTime     @default(now())
+  restoredAt     DateTime?
+  quarantinedBy  String
+}
+
+model Incident {
+  id                 String       @id @default(cuid())
+  sourceRecordId     String
+  sourceRecord       SourceRecord @relation(fields: [sourceRecordId], references: [id])
+
+  status             String       @default("active")
+  // active | resolved | acknowledged
+
+  severity           String       @default("medium")
+  // low | medium | high | critical
+
+  changeType         String?
+  // FORMATTING | ADDITIVE | MODIFIED | CONTRADICTORY
+
+  semanticDiffScore  Float?
+  // 0.0 to 1.0 — higher = more similar (less change)
+
+  action             String?
+  // LOW_PRIORITY_ALERT | MONITOR | QUARANTINE_AND_REINGEST | EMERGENCY_QUARANTINE
+
+  embeddingsAffected Int          @default(0)
+  blastRadius        Int          @default(0)
+  // count of LLM responses that used stale data
+
+  alertSent          Boolean      @default(false)
+  alertSentAt        DateTime?
+
+  resolvedAt         DateTime?
+  resolvedBy         String?
+  // "automatic" | "manual" | "reingest"
+
+  notes              String?
+
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  shieldEvents       ShieldEvent[]
 }

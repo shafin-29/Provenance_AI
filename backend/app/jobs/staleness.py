@@ -93,6 +93,7 @@ async def run_staleness_check() -> dict:
             )
             alerts_created.append({
                 "id": alert.id,
+                "sourceRecordId": record.id,
                 "sourceId": record.sourceId,
                 "pipelineId": pipeline_id,
                 "detectedAt": alert.detectedAt.isoformat(),
@@ -115,17 +116,34 @@ async def run_staleness_check() -> dict:
         checked,
         marked_stale,
     )
-    
+
+    # Delegate to Remediation Engine for semantic diff, classification,
+    # quarantine decisions, incident creation, and alerting.
+    # This replaces the old direct email dispatch.
     if marked_stale > 0:
-        run_id = datetime.utcnow().strftime("%Y%m%d%H%M%S")
         try:
-            from app.services.email import send_staleness_alert_email
-            send_staleness_alert_email(alerts_created, run_id)
+            from app.services.remediation import RemediationEngine
+            for alert_info in alerts_created:
+                source_record_id = alert_info.get("sourceRecordId")
+                if source_record_id:
+                    try:
+                        incident = await RemediationEngine.handle_staleness(source_record_id)
+                        if incident:
+                            logger.info(
+                                "Remediation completed for %s — incident=%s severity=%s",
+                                alert_info.get("sourceId"), incident.id, incident.severity
+                            )
+                    except Exception as e:
+                        logger.error(
+                            "Remediation failed for %s: %s",
+                            alert_info.get("sourceId"), e
+                        )
         except Exception as e:
-            logger.error(f"Failed to send email alert: {e}")
+            logger.error("Failed to import RemediationEngine: %s", e)
 
     return {
         "checked": checked,
         "markedStale": marked_stale,
         "alerts": alerts_created,
     }
+

@@ -13,7 +13,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.core.config import settings
-from app.api.routes import health, ingest, sources, trace, response, alerts, keys, dashboard, test_helpers
+from app.api.routes import health, ingest, sources, trace, response, alerts, keys, dashboard, test_helpers, events, quarantine, incidents, shield
 from app.core.db import prisma
 from app.core.auth import get_auth
 from fastapi import Depends
@@ -71,22 +71,22 @@ def _print_startup_banner(db_ok: bool):
     email_ok = bool(os.environ.get("RESEND_API_KEY"))
     interval_hours = int(os.environ.get("STALENESS_CHECK_INTERVAL_HOURS", "24"))
 
-    db_icon = "✓" if db_ok else "✗"
-    auth_icon = "✓"
-    email_icon = "✓" if email_ok else "✗ (RESEND_API_KEY missing)"
+    db_icon = "OK" if db_ok else "ERR"
+    auth_icon = "OK"
+    email_icon = "OK" if email_ok else "ERR (RESEND_API_KEY missing)"
     stale_str = f"Every {interval_hours}h"
 
     lines = [
-        "┌─────────────────────────────────────────┐",
-        "│  ProvenanceAI Backend v0.1.0            │",
-        f"│  Database:     {db_icon} {'Connected' if db_ok else 'DISCONNECTED':23}│",
-        f"│  Auth:         {auth_icon} {auth_str:23}│",
-        f"│  Email:        {email_icon:31}│",
-        f"│  Staleness:    ✓ {stale_str:21}│",
-        "└─────────────────────────────────────────┘",
+        "-----------------------------------------",
+        "  ProvenanceAI Backend v0.1.0            ",
+        f"  Database:     {db_icon} {'Connected' if db_ok else 'DISCONNECTED':23}",
+        f"  Auth:         {auth_icon} {auth_str:23}",
+        f"  Email:        {email_icon:31}",
+        f"  Staleness:    OK {stale_str:21}",
+        "-----------------------------------------",
     ]
     for line in lines:
-        print(line)
+        logger.info(line)
 
 
 @asynccontextmanager
@@ -236,6 +236,10 @@ app.include_router(response.router, prefix="/api", dependencies=[Depends(get_aut
 app.include_router(alerts.router, prefix="/api", dependencies=[Depends(get_auth)])
 app.include_router(dashboard.router, prefix="/api", dependencies=[Depends(get_auth)])
 app.include_router(test_helpers.router, prefix="/api", dependencies=[Depends(get_auth)])
+app.include_router(events.router, prefix="/api", dependencies=[Depends(get_auth)])
+app.include_router(quarantine.router, prefix="/api", dependencies=[Depends(get_auth)])
+app.include_router(incidents.router, prefix="/api", dependencies=[Depends(get_auth)])
+app.include_router(shield.router, prefix="/api", dependencies=[Depends(get_auth)])
 
 
 @app.get("/")

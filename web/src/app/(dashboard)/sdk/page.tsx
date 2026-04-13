@@ -157,9 +157,6 @@ export default function SdkSetupPage() {
           <h1 className="text-[20px] font-medium text-text-primary tracking-tight">SDK Setup</h1>
           <p className="text-[13px] text-text-muted mt-1">Instrument your LangChain pipeline in 3 steps</p>
         </div>
-        <a href="#" className="flex items-center gap-1.5 text-[13px] font-medium text-accent-primary hover:underline group">
-          View SDK docs <ExternalLink size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-        </a>
       </div>
 
       {/* Step Tracker */}
@@ -216,7 +213,7 @@ export default function SdkSetupPage() {
             
             <div className="mb-8">
               <h3 className="text-[14px] font-medium text-text-primary">Your API Keys</h3>
-              <p className="text-[13px] text-text-muted mb-4">Keep your API key secret — treat it like a password.</p>
+              <p className="text-[13px] text-text-muted mb-4">Keep your API key secret, treat it like a password.</p>
               
               <div className="flex flex-col gap-2 mb-6">
                 {keys.map((k) => (
@@ -264,7 +261,7 @@ export default function SdkSetupPage() {
                 <div className="p-4 bg-[#FFFBEB] border border-[#FCD34D] rounded-[8px]">
                   <div className="flex items-center gap-2 text-[#92400E] mb-3">
                     <AlertTriangle size={16} />
-                    <span className="text-[13px] font-medium">Copy this key now — it won't be shown again</span>
+                    <span className="text-[13px] font-medium">Copy this key now, it won't be shown again</span>
                   </div>
                   <CodeBlock content={revealKey!} />
                   <div className="flex items-center justify-between mt-4">
@@ -296,9 +293,9 @@ export default function SdkSetupPage() {
               </div>
 
               {activeTab === "pinecone" ? (
-                <CodeBlock content={`from provenance_ai import ProvenanceAIClient\nfrom langchain_pinecone import PineconeVectorStore\n\nsdk = ProvenanceAIClient(\n    api_url="https://your-backend.railway.app",\n    api_key="${previewOrRevealKey}",\n    pipeline_id="your-pipeline-id"\n)\n\n# Ingest your documents\ndocs = sdk.ingest("path/to/document.pdf")\nvectorstore = PineconeVectorStore(index_name="your-index")\nvectorstore.add_documents([doc for doc, _ in docs])\n\n# Wrap your retriever\nretriever = sdk.get_retriever(\n    vectorstore.as_retriever(),\n    session_id="unique-session-id"\n)`} />
+                <CodeBlock content={`from provenance_ai import ProvenanceAIClient\nfrom langchain_pinecone import PineconeVectorStore\n\nsdk = ProvenanceAIClient(\n    api_url="https://provenance-ai.onrender.com",\n    api_key="${previewOrRevealKey}",\n    pipeline_id="your-pipeline-id"\n)\n\n# Ingest your documents\ndocs = sdk.ingest("path/to/document.pdf")\nvectorstore = PineconeVectorStore(index_name="your-index")\nvectorstore.add_documents([doc for doc, _ in docs])\n\n# Wrap your retriever\nretriever = sdk.get_retriever(\n    vectorstore.as_retriever(),\n    session_id="unique-session-id"\n)`} />
               ) : (
-                <CodeBlock content={`from provenance_ai import ProvenanceAIClient\nfrom langchain_chroma import Chroma\n\nsdk = ProvenanceAIClient(\n    api_url="http://localhost:8000",\n    api_key="${previewOrRevealKey}",\n    pipeline_id="your-pipeline-id"\n)\n\n# Ingest your documents\ndocs = sdk.ingest("path/to/document.pdf")\nvectorstore = Chroma(collection_name="your-collection")\nvectorstore.add_documents([doc for doc, _ in docs])\n\n# Wrap your retriever\nretriever = sdk.get_retriever(\n    vectorstore.as_retriever(),\n    session_id="unique-session-id"\n)`} />
+                <CodeBlock content={`from provenance_ai import ProvenanceAIClient\nfrom langchain_chroma import Chroma\n\nsdk = ProvenanceAIClient(\n    api_url="https://provenance-ai.onrender.com",\n    api_key="${previewOrRevealKey}",\n    pipeline_id="your-pipeline-id"\n)\n\n# Ingest your documents\ndocs = sdk.ingest("path/to/document.pdf")\nvectorstore = Chroma(collection_name="your-collection")\nvectorstore.add_documents([doc for doc, _ in docs])\n\n# Wrap your retriever\nretriever = sdk.get_retriever(\n    vectorstore.as_retriever(),\n    session_id="unique-session-id"\n)`} />
               )}
             </div>
 
@@ -363,8 +360,11 @@ export default function SdkSetupPage() {
 
       {/* Environment Variables Reference */}
       <div className="mt-12 max-w-3xl mx-auto w-full">
-        <h3 className="text-[10px] font-medium uppercase tracking-[0.08em] text-text-muted mb-3 select-none">ENVIRONMENT VARIABLES</h3>
-        <CodeBlock content={`PROVENANCE_AI_API_URL=https://your-backend.railway.app\nPROVENANCE_AI_API_KEY=${previewOrRevealKey}`} />
+        <h3 className="text-[10px] font-medium uppercase tracking-[0.08em] text-text-muted mb-2 select-none">ENVIRONMENT VARIABLES</h3>
+        <p className="text-[13px] text-text-muted mb-4">
+          Add these to your .env file or deployment environment.
+        </p>
+        <CodeBlock content={`PROVENANCE_AI_API_URL=https://provenance-ai.onrender.com\nPROVENANCE_AI_API_KEY=${previewOrRevealKey}`} />
       </div>
     </div>
   );
