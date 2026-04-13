@@ -123,6 +123,110 @@ export interface TraceResult extends RetrievalEvent {
   // Extends RetrievalEvent — all lineage data is nested within
 }
 
+/* ── Shield ─────────────────────────────────────────────────────────── */
+
+export interface ShieldStats {
+  chunksInspectedToday: number;
+  chunksQuarantinedToday: number;
+  chunksSubstitutedToday: number;
+  responsesProtectedToday: number;
+  responsesBlockedToday: number;
+  chunksInspectedAllTime: number;
+  lastEventAt: string | null;
+}
+
+export interface ShieldActivityDay {
+  date: string;
+  label: string;
+  clean: number;
+  intercepted: number;
+}
+
+export interface ShieldEvent {
+  id: string;
+  eventType: string;
+  pipelineId: string;
+  sessionId: string;
+  sourceId: string;
+  payload: Record<string, unknown>;
+  createdAt: string;
+}
+
+/* ── Incidents ──────────────────────────────────────────────────────── */
+
+export interface Incident {
+  id: string;
+  sourceId: string | null;
+  status: "active" | "resolved" | "acknowledged";
+  severity: "low" | "medium" | "high" | "critical";
+  changeType: string | null;
+  semanticDiffScore: number | null;
+  action: string | null;
+  embeddingsAffected: number;
+  blastRadius: number;
+  alertSent: boolean;
+  resolvedAt: string | null;
+  createdAt: string;
+  pendingReingest: boolean;
+}
+
+export interface IncidentDetail {
+  id: string;
+  sourceRecordId: string;
+  sourceRecord: {
+    id: string;
+    sourceId: string;
+    contentHash: string;
+    pipelineId: string;
+    isStale: boolean;
+    isQuarantined: boolean;
+    pendingReingest: boolean;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+  status: string;
+  severity: string;
+  changeType: string | null;
+  semanticDiffScore: number | null;
+  action: string | null;
+  embeddingsAffected: number;
+  blastRadius: number;
+  alertSent: boolean;
+  alertSentAt: string | null;
+  resolvedAt: string | null;
+  resolvedBy: string | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+  timeline: {
+    id: string;
+    eventType: string;
+    sourceId: string | null;
+    createdAt: string;
+    payload: Record<string, unknown>;
+  }[];
+}
+
+export interface IncidentStats {
+  activeIncidents: number;
+  criticalCount: number;
+  highCount: number;
+  mediumCount: number;
+  lowCount: number;
+  resolvedThisWeek: number;
+  avgResolutionHours: number;
+  totalBlastRadius: number;
+}
+
+/* ── Quarantine ─────────────────────────────────────────────────────── */
+
+export interface QuarantineEntry {
+  sourceId: string;
+  reason: string;
+  quarantinedAt: string;
+  quarantinedBy: string;
+}
+
 /** Generic API error response */
 export interface ApiError {
   error: string;

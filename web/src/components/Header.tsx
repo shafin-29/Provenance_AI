@@ -3,14 +3,19 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 const pageTitles: Record<string, string> = {
+  "/shield": "Shield Status",
   "/trace": "Trace Explorer",
   "/sources": "Source Records",
   "/alerts": "Staleness Alerts",
   "/sdk": "SDK Setup",
   "/pipelines": "Pipelines",
-  "/settings": "Settings"
+  "/settings": "Settings",
+  "/incidents": "Incidents",
+  "/quarantine": "Quarantine",
+  "/pipeline": "Live Pipeline",
 };
 
 export function Header() {
@@ -39,7 +44,9 @@ export function Header() {
   return (
     <header className="flex h-12 shrink-0 items-center justify-between border-b border-border-subtle bg-background px-6 sticky top-0 z-20">
       <div className="flex items-center text-[13px]">
-        <span className="text-text-muted font-medium">ProvenanceAI</span>
+        <Link href="/" className="text-text-muted font-medium hover:text-text-primary transition-colors">
+          ProvenanceAI
+        </Link>
         <span className="text-text-secondary mx-2">/</span>
         <span className="text-text-primary font-medium">{title}</span>
       </div>

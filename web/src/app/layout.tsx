@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ProvenanceAI — AI Data Provenance Infrastructure",
-  description: "Trace any LLM pipeline output back to its exact source data record. Debug hallucinations, detect stale embeddings, and maintain compliance.",
+  title: "ProvenanceAI — AI Pipeline Safety Layer",
+  description: "ProvenanceAI intercepts stale data before it reaches your LLM, quarantines bad embeddings automatically, and sends you a complete incident report with everything already handled. Like Cloudflare — but for AI pipelines.",
 };
 
 export default function RootLayout({
