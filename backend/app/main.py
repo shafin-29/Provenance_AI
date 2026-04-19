@@ -216,7 +216,7 @@ _raw_origins = os.environ.get(
     "ALLOWED_ORIGINS",
     "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001"
 )
-allowed_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+allowed_origins = [o.strip().rstrip("/") for o in _raw_origins.split(",") if o.strip()]
 
 # If allowing everything, credentials cannot be True
 is_wildcard = "*" in allowed_origins
