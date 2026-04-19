@@ -218,10 +218,13 @@ _raw_origins = os.environ.get(
 )
 allowed_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
 
+# If allowing everything, credentials cannot be True
+is_wildcard = "*" in allowed_origins
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_credentials=not is_wildcard,
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -34,4 +34,4 @@ RUN npx prisma generate
 EXPOSE 8080
 
 # Start command
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD python -m prisma py fetch && uvicorn app.main:app --host 0.0.0.0 --port 8080
